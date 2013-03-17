@@ -1,5 +1,9 @@
 #include "stdafx.h"
+#include "utils.h"
 #include "Processor.h"
+#include "Parser.h"
+
+using namespace std;
 
 Processor Processor::instance;
 
@@ -16,4 +20,27 @@ void Processor::processTimer() {
 		inp.ki = kbd;
 		SendInput(1, &inp, sizeof(INPUT));
 	}
+}
+
+void Processor::update(double dt) {
+
+}
+
+void Processor::openScenario() {
+	OPENFILENAME ofn;
+	ZeroMemory(&ofn, sizeof(ofn));
+	WCHAR fileName[256] = L"";
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hInstance = hInst;
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFilter = L"Test scenario file (*.scn)\0*.scn\0All files (*.*)\0*.*\0";
+	ofn.lpstrFile = fileName;
+	ofn.nMaxFile = 256;	
+	GetOpenFileName(&ofn);
+	lout << fileName << endl;
+
+	//TODO: Transfer to normal location
+	
+	ifstream infile(fileName);
+	Parser::parse(infile);
 }

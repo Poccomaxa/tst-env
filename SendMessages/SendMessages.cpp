@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "SendMessages.h"
 #include "Processor.h"
+#include "utils.h"
 
 #define MAX_LOADSTRING 100
 
@@ -43,6 +44,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SENDMESSAGES));
 
+	lout.startMessage();
+	double clock = SystemTime();
+
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
@@ -51,6 +55,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		double nclock = SystemTime();
+		Processor::get().update(nclock - clock);
+		clock = nclock;
 	}
 
 	return (int) msg.wParam;
@@ -112,16 +119,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
    //Application initializer
-   CreateWindow(L"BUTTON", L"Start sending spaces", WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, 100, 100, 100, 20, hWnd, (HMENU)IDB_SENDSPACE, hInst, NULL);
-   CreateWindow(L"BUTTON", L"Create process", WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, 340, 100, 100, 20, hWnd, (HMENU)IDB_CREATEPR, hInst, NULL);
-   CreateWindow(L"BUTTON", L"Stop sending spaces", WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, 220, 100, 100, 20, hWnd, (HMENU)IDB_STSENDSPACE, hInst, NULL);
+   //CreateWindow(L"BUTTON", L"Start sending spaces", WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, 100, 100, 100, 20, hWnd, (HMENU)IDB_SENDSPACE, hInst, NULL);
+   //CreateWindow(L"BUTTON", L"Create process", WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, 340, 100, 100, 20, hWnd, (HMENU)IDB_CREATEPR, hInst, NULL);
+   //CreateWindow(L"BUTTON", L"Stop sending spaces", WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, 220, 100, 100, 20, hWnd, (HMENU)IDB_STSENDSPACE, hInst, NULL);
 
-   SetTimer(hWnd, IDT_MAIN, 1000, NULL); 
+   //SetTimer(hWnd, IDT_MAIN, 1000, NULL); 
 
    if (!hWnd)
    {
       return FALSE;
    }
+
+   Processor::get().init(hWnd, hInstance);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
@@ -159,24 +168,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
-		case IDB_SENDSPACE:
-			Processor::get().setSendingSpaces(true);
-			break;
-		case IDB_STSENDSPACE:
-			Processor::get().setSendingSpaces(false);
-			break;
-		case IDB_CREATEPR: {
-			STARTUPINFO st;
-			PROCESS_INFORMATION pif;
-			ZeroMemory(&st, sizeof(st));
-			st.cb = sizeof(st);
-			//st
-			CreateProcess(L"e:/twenty.exe", NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &st, &pif);
-			//Processor::get().setSendingSpaces(true);
-			std::wstringstream ss;
-			ss << GetLastError() << std::endl;
-			OutputDebugString(ss.str().c_str());
-			}
+		//case IDB_CREATEPR: {
+		//	STARTUPINFO st;
+		//	PROCESS_INFORMATION pif;
+		//	ZeroMemory(&st, sizeof(st));
+		//	st.cb = sizeof(st);
+		//	//st
+		//	CreateProcess(L"e:/twenty.exe", NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &st, &pif);
+		//	//Processor::get().setSendingSpaces(true);
+		//	std::wstringstream ss;
+		//	ss << GetLastError() << std::endl;
+		//	OutputDebugString(ss.str().c_str());
+		//	}
+		//	break;
+		case ID_FILE_OPENSCENARIO:
+			Processor::get().openScenario();
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
