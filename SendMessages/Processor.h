@@ -1,15 +1,19 @@
 #pragma once
 
 #include <Windows.h>
+#include "utils.h"
+#include "Scenario.h"
 
 class Processor {
 	HWND hWnd;
 	HINSTANCE hInst;
 
 	static Processor instance;
-	Processor(): sendSpaces(false) {}
 
-	bool sendSpaces;
+	Scenario *curScenario;
+
+	Processor(): curScenario(NULL) {}
+
 public:
 	static Processor &get() { return instance; }
 
@@ -20,5 +24,8 @@ public:
 
 	void openScenario();
 
-	void setSendingSpaces(bool val) { sendSpaces = val; }
+	void ShowMessage(const std::string &message, const std::string &title = "") {
+		
+		MessageBox(hWnd, toUnicode(message).c_str(), toUnicode(title).c_str(), MB_OK);
+	}
 };

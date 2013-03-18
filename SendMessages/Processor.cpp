@@ -8,7 +8,6 @@ using namespace std;
 Processor Processor::instance;
 
 void Processor::processTimer() {
-	if (sendSpaces) {
 		INPUT inp;
 		inp.type = INPUT_KEYBOARD;
 		KEYBDINPUT kbd;
@@ -19,11 +18,11 @@ void Processor::processTimer() {
 		kbd.wScan = 0x39;
 		inp.ki = kbd;
 		SendInput(1, &inp, sizeof(INPUT));
-	}
 }
 
 void Processor::update(double dt) {
-
+	if (curScenario && !curScenario->isCompleted())
+		curScenario->step(dt);
 }
 
 void Processor::openScenario() {
@@ -42,5 +41,7 @@ void Processor::openScenario() {
 	//TODO: Transfer to normal location
 	
 	ifstream infile(fileName);
-	Parser::parse(infile);
+	Parser parser;
+	curScenario = parser.parse(infile);
+	curScenario->reset();
 }

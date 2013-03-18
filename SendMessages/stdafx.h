@@ -21,6 +21,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <boost\algorithm\string.hpp>
 #include <boost\bind.hpp>
 

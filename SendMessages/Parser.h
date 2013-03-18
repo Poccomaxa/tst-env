@@ -1,8 +1,11 @@
 #pragma once
-#include "Scenario.h"
+#include "ScenarioFactories.h"
 
 class Parser {
-	Parser() {}
+	TriggerFactory tf;
+	CommandFactory cf;
+	int curLine;
+	Scenario *formErrorMessage(const std::string &er);
 public:
-	static void parse(std::istream &input);
+	Scenario *parse(std::istream &input);
 };
